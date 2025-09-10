@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>5 Clocks</title>
+<style>
+body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 2em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    height: 100vh;
+    margin: 0;
+    background: #f0f0f0;
+}
+
+.clock {
+    border-radius: 50%;
+    background: #fff url('clock.svg') no-repeat center center;
+    background-size: contain;
+    width: 15em;
+    height: 15em;
+    position: relative;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.hours, .minutes, .seconds {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3%; /* ajustable selon l’aiguille */
+    background: #000;
+    transform-origin: 50% 0%; /* rotation autour du haut */
+}
+
+/* aiguilles spécifiques */
+.hours { height: 35%; }
+.minutes { height: 45%; }
+.seconds { height: 50%; background: red; }
+   
+
+/* Placement des aiguilles en partant du centre */
+.hours {
+    width: 3%;
+    height: 35%;
+    background: #000;
+    transform: translate(-50%, -100%);
+}
+
+.minutes {
+    width: 2%;
+    height: 45%;
+    background: #000;
+    transform: translate(-50%, -100%);
+}
+
+.seconds {
+    width: 1%;
+    height: 50%;
+    background: red;
+    transform: translate(-50%, -100%);
+}
+
+.center-point {
+    width: 5%;
+    height: 5%;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1em;
+    background: #fff;
+    border-radius: 1em;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.wrapper:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.timezone-label {
+    margin-top: 0.5em;
+    font-size: 5em;
+    color: #000000;
+    font-weight: bold;
+    text-align: center;
+    user-select: none;
+    pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<!-- 5 horloges -->
+<div class="wrapper">
+<div class="clock clock1">
+    <div class="hours-container"><div class="hours"></div></div>
+    <div class="minutes-container"><div class="minutes"></div></div>
+    <div class="seconds-container"><div class="seconds"></div></div>
+    <div class="center-point"></div>
+    <div class="timezone-label" style="position:absolute;bottom:250px;width:100%;text-align:center;font-size:0.8em;">Paris</div>
+</div>
+</div>
+
+
+<div class="wrapper">
+<div class="clock clock2">
+    <div class="hours-container"><div class="hours"></div></div>
+    <div class="minutes-container"><div class="minutes"></div></div>
+    <div class="seconds-container"><div class="seconds"></div></div>
+    <div class="center-point"></div>
+    <div class="timezone-label" style="position:absolute;bottom:250px;width:100%;text-align:center;font-size:0.8em;">New York</div>
+</div>
+</div>
+
+
+<div class="wrapper">
+<div class="clock clock3">
+    <div class="hours-container"><div class="hours"></div></div>
+    <div class="minutes-container"><div class="minutes"></div></div>
+    <div class="seconds-container"><div class="seconds"></div></div>
+    <div class="center-point"></div>
+    <div class="timezone-label" style="position:absolute;bottom:250px;width:100%;text-align:center;font-size:0.8em;">Tokyo</div>
+</div>
+</div>
+
+
+<div class="wrapper">
+<div class="clock clock4">
+    <div class="hours-container"><div class="hours"></div></div>
+    <div class="minutes-container"><div class="minutes"></div></div>
+    <div class="seconds-container"><div class="seconds"></div></div>
+    <div class="center-point"></div>
+    <div class="timezone-label" style="position:absolute;bottom:250px;width:100%;text-align:center;font-size:0.8em;">Sydney</div>
+</div>
+</div>
+
+
+<div class="wrapper">
+<div class="clock clock5">
+    <div class="hours-container"><div class="hours"></div></div>
+    <div class="minutes-container"><div class="minutes"></div></div>
+    <div class="seconds-container"><div class="seconds"></div></div>
+    <div class="center-point"></div>
+    <div class="timezone-label" style="position:absolute;bottom:250px;width:100%;text-align:center;font-size:0.8em;">Johannesburg</div>
+</div>
+</div>
+
+
+<script>
+const clocks = [
+    { container: document.querySelector('.clock1'), timezone: 'Europe/Paris' },
+    { container: document.querySelector('.clock2'), timezone: 'America/New_York' },
+    { container: document.querySelector('.clock3'), timezone: 'Asia/Tokyo' },
+    { container: document.querySelector('.clock4'), timezone: 'Australia/Sydney' },
+    { container: document.querySelector('.clock5'), timezone: 'Africa/Johannesburg' }
+];
+
+function updateClock(container, timezone) {
+    const now = new Date();
+    const options = { hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false, timeZone: timezone };
+    const timeParts = new Intl.DateTimeFormat('en-US', options).formatToParts(now);
+
+    let h, m, s;
+    for (const part of timeParts) {
+        if (part.type === 'hour') h = parseInt(part.value);
+        if (part.type === 'minute') m = parseInt(part.value);
+        if (part.type === 'second') s = parseInt(part.value);
+    }
+
+    const secondsDegrees = (s / 60) * 360;
+    const minutesDegrees = (m / 60) * 360 + (s / 60) * 6;
+    const hoursDegrees = ((h % 12) / 12) * 360 + (m / 60) * 30;
+
+container.querySelector('.hours').style.transform = `rotate(${hoursDegrees}deg)`;
+container.querySelector('.minutes').style.transform = `rotate(${minutesDegrees}deg)`;
+container.querySelector('.seconds').style.transform = `rotate(${secondsDegrees}deg)`;
+}
+
+// Mise à jour toutes les secondes
+setInterval(() => {
+    clocks.forEach(clock => updateClock(clock.container, clock.timezone));
+}, 1000);
+
+// Mise à jour immédiate
+clocks.forEach(clock => updateClock(clock.container, clock.timezone));
+</script>
+
+</body>
+</html>
